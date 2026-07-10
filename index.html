@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kudas - AI创意与开发工作台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 左侧固定侧边栏 */
+        .sidebar {
+            width: 240px;
+            background: #cddef7;
+            color: #fff;
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+
+        /* 顶部Logo区域 高度固定60px */
+        .logo-box {
+            width: 100%;
+            height: 60px;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+        /* 图片logo样式 */
+        .logo-img {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+
+        /* 导航菜单 */
+        .nav-list {
+            list-style: none;
+            padding: 0 12px;
+        }
+        .nav-item {
+            margin-bottom: 8px;
+        }
+        .nav-link {
+            display: block;
+            padding: 14px 16px;
+            border-radius: 8px;
+            color: #000307;
+            text-decoration: none;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background: #242b38;
+            color: #ffffff;
+        }
+        .nav-link.active {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        /* 底部登录按钮 */
+        .sidebar-bottom {
+            padding: 0 12px 20px;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* 右侧主内容区域 */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 32px;
+        }
+        .page-title {
+            font-size: 26px;
+            color: #161a23;
+            margin-bottom: 28px;
+            font-weight: 600;
+        }
+
+        /* 项目卡片网格布局（复刻miaoda卡片样式） */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+        }
+        .card-img {
+            width: 100%;
+            height: 160px;
+            background: #eef2f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .card-body {
+            padding: 18px;
+        }
+        .card-title {
+            font-size: 17px;
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .card-desc {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧侧边栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <!-- 顶部Logo 固定高60px -->
+            <div class="logo-box">
+               
+                    <!-- 图片logo + 链接 -->
+                     <a href="index.html">
+                        <img src="logo.png" class="logo-img">
+                    </a>
+                
+            </div>
+            <!-- 主菜单 -->
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">视频制作</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">软件开发</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">龙虾部署</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">技能开发</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">创作社区</a>
+                </li>
+            </ul>
+        </div>
+        <!-- 底部登录按钮 -->
+        <div class="sidebar-bottom">
+            <button class="login-btn">登录账号</button>
+        </div>
+    </aside>
+
+    <!-- 右侧主内容卡片区 -->
+    <main class="main-content">
+        <h1 class="page-title">全部项目工作台</h1>
+        <div class="card-grid">
+            <!-- 示例卡片1 -->
+            <div class="project-card">
+                <div class="card-img">视频AI自动剪辑工具预览图</div>
+                <div class="card-body">
+                    <h3 class="card-title">短视频批量剪辑系统</h3>
+                    <p class="card-desc">AI自动分镜、字幕生成、配音合成，一键批量产出营销短视频，适配抖音/小红书平台。</p>
+                </div>
+            </div>
+            <!-- 示例卡片2 -->
+            <div class="project-card">
+                <div class="card-img">龙虾Agent后台界面预览</div>
+                <div class="card-body">
+                    <h3 class="card-title">龙虾像素空间部署面板</h3>
+                    <p class="card-desc">本地Agent一键链接，电子宠物实时状态展示，支持好友互访、AI对话交互。</p>
+                </div>
+            </div>
+            <!-- 示例卡片3 -->
+            <div class="project-card">
+                <div class="card-img">企业管理系统演示页</div>
+                <div class="card-body">
+                    <h3 class="card-title">企业全栈定制开发</h3>
+                    <p class="card-desc">官网、小程序、管控大屏、答题系统一站式开发，提供可复制源码模板。</p>
+                </div>
+            </div>
+            <!-- 示例卡片4 -->
+            <div class="project-card">
+                <div class="card-img">AI技能训练工作台</div>
+                <div class="card-body">
+                    <h3 class="card-title">自定义AI技能开发</h3>
+                    <p class="card-desc">搭建专属AI助手、行业工具、测试小程序，可视化提示词配置，无需复杂代码。</p>
+                </div>
+            </div>
+            <!-- 示例卡片5 -->
+            <div class="project-card">
+                <div class="card-img">创作者社区首页预览</div>
+                <div class="card-body">
+                    <h3 class="card-title">创作者交流社区</h3>
+                    <p class="card-desc">项目分享、模板开源、流量扶持计划，创作者发布作品互相交流复用。</p>
+                </div>
+            </div>
+            <!-- 示例卡片6 -->
+            <div class="project-card">
+                <div class="card-img">国风诗词互动小游戏</div>
+                <div class="card-body">
+                    <h3 class="card-title">国风互动H5游戏</h3>
+                    <p class="card-desc">诗词闯关、历史模拟、人生模拟器，轻量化网页互动游戏快速搭建。</p>
+                </div>
+            </div>
+            <!-- 示例卡片1 -->
+            <div class="project-card">
+                <div class="card-img">视频AI自动剪辑工具预览图</div>
+                <div class="card-body">
+                    <h3 class="card-title">短视频批量剪辑系统</h3>
+                    <p class="card-desc">AI自动分镜、字幕生成、配音合成，一键批量产出营销短视频，适配抖音/小红书平台。</p>
+                </div>
+            </div>
+            <!-- 示例卡片2 -->
+            <div class="project-card">
+                <div class="card-img">龙虾Agent后台界面预览</div>
+                <div class="card-body">
+                    <h3 class="card-title">龙虾像素空间部署面板</h3>
+                    <p class="card-desc">本地Agent一键链接，电子宠物实时状态展示，支持好友互访、AI对话交互。</p>
+                </div>
+            </div>
+            <!-- 示例卡片3 -->
+            <div class="project-card">
+                <div class="card-img">企业管理系统演示页</div>
+                <div class="card-body">
+                    <h3 class="card-title">企业全栈定制开发</h3>
+                    <p class="card-desc">官网、小程序、管控大屏、答题系统一站式开发，提供可复制源码模板。</p>
+                </div>
+            </div>
+            <!-- 示例卡片4 -->
+            <div class="project-card">
+                <div class="card-img">AI技能训练工作台</div>
+                <div class="card-body">
+                    <h3 class="card-title">自定义AI技能开发</h3>
+                    <p class="card-desc">搭建专属AI助手、行业工具、测试小程序，可视化提示词配置，无需复杂代码。</p>
+                </div>
+            </div>
+            <!-- 示例卡片5 -->
+            <div class="project-card">
+                <div class="card-img">创作者社区首页预览</div>
+                <div class="card-body">
+                    <h3 class="card-title">创作者交流社区</h3>
+                    <p class="card-desc">项目分享、模板开源、流量扶持计划，创作者发布作品互相交流复用。</p>
+                </div>
+            </div>
+            <!-- 示例卡片6 -->
+            <div class="project-card">
+                <div class="card-img">国风诗词互动小游戏</div>
+                <div class="card-body">
+                    <h3 class="card-title">国风互动H5游戏</h3>
+                    <p class="card-desc">诗词闯关、历史模拟、人生模拟器，轻量化网页互动游戏快速搭建。</p>
+                </div>
+            </div>
+            <!-- 示例卡片1 -->
+            <div class="project-card">
+                <div class="card-img">视频AI自动剪辑工具预览图</div>
+                <div class="card-body">
+                    <h3 class="card-title">短视频批量剪辑系统</h3>
+                    <p class="card-desc">AI自动分镜、字幕生成、配音合成，一键批量产出营销短视频，适配抖音/小红书平台。</p>
+                </div>
+            </div>
+            <!-- 示例卡片2 -->
+            <div class="project-card">
+                <div class="card-img">龙虾Agent后台界面预览</div>
+                <div class="card-body">
+                    <h3 class="card-title">龙虾像素空间部署面板</h3>
+                    <p class="card-desc">本地Agent一键链接，电子宠物实时状态展示，支持好友互访、AI对话交互。</p>
+                </div>
+            </div>
+            <!-- 示例卡片3 -->
+            <div class="project-card">
+                <div class="card-img">企业管理系统演示页</div>
+                <div class="card-body">
+                    <h3 class="card-title">企业全栈定制开发</h3>
+                    <p class="card-desc">官网、小程序、管控大屏、答题系统一站式开发，提供可复制源码模板。</p>
+                </div>
+            </div>
+            <!-- 示例卡片4 -->
+            <div class="project-card">
+                <div class="card-img">AI技能训练工作台</div>
+                <div class="card-body">
+                    <h3 class="card-title">自定义AI技能开发</h3>
+                    <p class="card-desc">搭建专属AI助手、行业工具、测试小程序，可视化提示词配置，无需复杂代码。</p>
+                </div>
+            </div>
+            <!-- 示例卡片5 -->
+            <div class="project-card">
+                <div class="card-img">创作者社区首页预览</div>
+                <div class="card-body">
+                    <h3 class="card-title">创作者交流社区</h3>
+                    <p class="card-desc">项目分享、模板开源、流量扶持计划，创作者发布作品互相交流复用。</p>
+                </div>
+            </div>
+            <!-- 示例卡片6 -->
+            <div class="project-card">
+                <div class="card-img">国风诗词互动小游戏</div>
+                <div class="card-body">
+                    <h3 class="card-title">国风互动H5游戏</h3>
+                    <p class="card-desc">诗词闯关、历史模拟、人生模拟器，轻量化网页互动游戏快速搭建。</p>
+                </div>
+            </div>
+            <!-- 示例卡片1 -->
+            <div class="project-card">
+                <div class="card-img">视频AI自动剪辑工具预览图</div>
+                <div class="card-body">
+                    <h3 class="card-title">短视频批量剪辑系统</h3>
+                    <p class="card-desc">AI自动分镜、字幕生成、配音合成，一键批量产出营销短视频，适配抖音/小红书平台。</p>
+                </div>
+            </div>
+            <!-- 示例卡片2 -->
+            <div class="project-card">
+                <div class="card-img">龙虾Agent后台界面预览</div>
+                <div class="card-body">
+                    <h3 class="card-title">龙虾像素空间部署面板</h3>
+                    <p class="card-desc">本地Agent一键链接，电子宠物实时状态展示，支持好友互访、AI对话交互。</p>
+                </div>
+            </div>
+            <!-- 示例卡片3 -->
+            <div class="project-card">
+                <div class="card-img">企业管理系统演示页</div>
+                <div class="card-body">
+                    <h3 class="card-title">企业全栈定制开发</h3>
+                    <p class="card-desc">官网、小程序、管控大屏、答题系统一站式开发，提供可复制源码模板。</p>
+                </div>
+            </div>
+            <!-- 示例卡片4 -->
+            <div class="project-card">
+                <div class="card-img">AI技能训练工作台</div>
+                <div class="card-body">
+                    <h3 class="card-title">自定义AI技能开发</h3>
+                    <p class="card-desc">搭建专属AI助手、行业工具、测试小程序，可视化提示词配置，无需复杂代码。</p>
+                </div>
+            </div>
+            <!-- 示例卡片5 -->
+            <div class="project-card">
+                <div class="card-img">创作者社区首页预览</div>
+                <div class="card-body">
+                    <h3 class="card-title">创作者交流社区</h3>
+                    <p class="card-desc">项目分享、模板开源、流量扶持计划，创作者发布作品互相交流复用。</p>
+                </div>
+            </div>
+            <!-- 示例卡片6 -->
+            <div class="project-card">
+                <div class="card-img">国风诗词互动小游戏</div>
+                <div class="card-body">
+                    <h3 class="card-title">国风互动H5游戏</h3>
+                    <p class="card-desc">诗词闯关、历史模拟、人生模拟器，轻量化网页互动游戏快速搭建。</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
