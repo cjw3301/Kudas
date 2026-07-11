@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kudas - 创作社区</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", system-ui, sans-serif;
+        }
+        body {
+            background-color: #f6f7f9;
+            display: flex;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 左侧侧边栏 全局统一配置，无修改 */
+        .sidebar {
+            width: 200px;
+            background-color: #eef0f3;
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px 0;
+        }
+        .logo-wrap {
+            width: 100%;
+            padding: 0 10px;
+            margin-bottom: 32px;
+        }
+        .logo-img {
+            height: auto;
+            width: 180px;
+            display: block;
+            margin: 0 auto;
+        }
+        .nav-list {
+            list-style: none;
+            padding: 0 8px;
+        }
+        .nav-item {
+            margin-bottom: 8px;
+        }
+        .nav-link {
+            display: block;
+            padding: 14px 10px;
+            border-radius: 6px;
+            color: #444952;
+            text-decoration: none;
+            font-size: 15px;
+            text-align: center;
+            transition: 0.2s all;
+        }
+        .nav-link:hover {
+            background: #dde0e5;
+            color: #222;
+        }
+        .nav-link.active {
+            background: #367aff;
+            color: #ffffff;
+        }
+        .sidebar-bottom {
+            padding: 0 10px 20px;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #367aff;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-btn:hover {
+            background: #2464e0;
+        }
+
+        /* 右侧主内容区域 */
+        .main {
+            margin-left: 200px;
+            flex: 1;
+            padding: 30px;
+        }
+        .page-title {
+            font-size: 26px;
+            margin-bottom: 24px;
+            color: #141924;
+            font-weight: 600;
+        }
+        /* 社区筛选栏，对标miaoda社区标签：推荐/最热/最新/我发布/我点赞 */
+        .filter-bar {
+            background: #fff;
+            padding: 16px 22px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+        .filter-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #222;
+        }
+        .filter-tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            padding: 6px 18px;
+            border: 1px solid #e2e6ed;
+            border-radius: 30px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+        .tag.active {
+            background: #367aff;
+            color: #fff;
+            border-color: #367aff;
+        }
+        .tag:hover:not(.active) {
+            border-color: #367aff;
+            color: #367aff;
+        }
+        /* 社区帖子容器：自动平铺，单卡片最大宽度480px */
+        .post-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 480px));
+            gap: 16px;
+        }
+        /* 社区帖子卡片样式 */
+        .post-card {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            padding: 22px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .post-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+        /* 帖子头部：标题+板块标签 */
+        .post-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .post-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111;
+            flex: 1;
+        }
+        .post-cat {
+            padding: 3px 8px;
+            background: #e8f1ff;
+            color: #367aff;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        /* 帖子业务标签 */
+        .post-label-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .post-label {
+            padding: 3px 10px;
+            background: #f3f6fb;
+            color: #555;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        /* 帖子简介 */
+        .post-desc {
+            font-size: 14px;
+            color: #606673;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        /* 帖子底部：作者、互动数据、查看按钮 */
+        .post-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #999;
+        }
+        .post-stat {
+            display: flex;
+            gap: 22px;
+        }
+        .detail-btn {
+            padding: 7px 20px;
+            background: #367aff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .detail-btn:hover {
+            background: #2464e0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧固定侧边栏，与index/skill页面互通跳转 -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="logo-wrap">
+                <a href="index.html">
+                    <img src="logo.png" class="logo-img" alt="Kudas Logo">
+                </a>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">任务</a>
+                </li>
+                <li class="nav-item">
+                    <a href="skill.html" class="nav-link">技能</a>
+                </li>
+                <li class="nav-item">
+                    <a href="tool.html" class="nav-link">工具</a>
+                </li>
+                <li class="nav-item">
+                    <a href="community.html" class="nav-link active">社区</a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-bottom">
+            <button class="login-btn">登录</button>
+        </div>
+    </aside>
+
+    <!-- 右侧社区帖子列表，参考miaoda社区问答页面 -->
+    <main class="main">
+        <h1 class="page-title">创作社区问答广场</h1>
+        <div class="filter-bar">
+            <div class="filter-title">内容分类</div>
+            <div class="filter-tags">
+                <div class="tag active">推荐</div>
+                <div class="tag">最热</div>
+                <div class="tag">最新</div>
+                <div class="tag">我发布的</div>
+                <div class="tag">我点赞的</div>
+                <div class="tag">龙虾Agent专区</div>
+                <div class="tag">AI开发交流</div>
+            </div>
+        </div>
+
+        <div class="post-container">
+            <!-- 帖子1 平台创作者招募活动 -->
+            <div class="post-card">
+                <div class="post-head">
+                    <div class="post-title">Kudas推广大使招募，海量流量与接单扶持</div>
+                    <span class="post-cat">平台公告</span>
+                </div>
+                <div class="post-label-group">
+                    <span class="post-label">创作者福利</span>
+                    <span class="post-label">流量扶持</span>
+                    <span class="post-label">接单变现</span>
+                </div>
+                <div class="post-desc">
+                    平台开启创作者招募计划，发布AI项目、技能模板、开发教程可获得首页曝光、接单优先推荐等福利，详细报名条件与奖励规则请看详情。
+                </div>
+                <div class="post-foot">
+                    <div class="post-stat">
+                        <span>作者：平台运营</span>
+                        <span>回复 82</span>
+                        <span>点赞 346</span>
+                    </div>
+                    <button class="detail-btn">查看详情</button>
+                </div>
+            </div>
+
+            <!-- 帖子2 龙虾部署问答 -->
+            <div class="post-card">
+                <div class="post-head">
+                    <div class="post-title">龙虾像素空间本地启动端口占用如何解决？</div>
+                    <span class="post-cat">部署问答</span>
+                </div>
+                <div class="post-label-group">
+                    <span class="post-label">龙虾Agent</span>
+                    <span class="post-label">环境调试</span>
+                    <span class="post-label">报错修复</span>
+                </div>
+                <div class="post-desc">
+                    本地安装龙虾像素空间后无法连接Agent，端口持续被占用，有没有完整排查流程与一键启动脚本，求大佬分享实操方案。
+                </div>
+                <div class="post-foot">
+                    <div class="post-stat">
+                        <span>作者：开发爱好者</span>
+                        <span>回复 31</span>
+                        <span>点赞 142</span>
+                    </div>
+                    <button class="detail-btn">查看详情</button>
+                </div>
+            </div>
+
+            <!-- 帖子3 短视频制作交流 -->
+            <div class="post-card">
+                <div class="post-head">
+                    <div class="post-title">AI批量短视频如何统一画面与字体风格？</div>
+                    <span class="post-cat">视频制作</span>
+                </div>
+                <div class="post-label-group">
+                    <span class="post-label">AI剪辑</span>
+                    <span class="post-label">批量产出</span>
+                    <span class="post-label">营销视频</span>
+                </div>
+                <div class="post-desc">
+                    使用视频技能批量生成内容时画面色调、字体差异很大，有没有固定参数或提示词模板，实现整套短视频视觉统一？
+                </div>
+                <div class="post-foot">
+                    <div class="post-stat">
+                        <span>作者：短视频运营</span>
+                        <span>回复 19</span>
+                        <span>点赞 96</span>
+                    </div>
+                    <button class="detail-btn">查看详情</button>
+                </div>
+            </div>
+
+            <!-- 帖子4 小程序开发提问 -->
+            <div class="post-card">
+                <div class="post-head">
+                    <div class="post-title">答题闯关小程序模板能否商用交付客户？</div>
+                    <span class="post-cat">程序开发</span>
+                </div>
+                <div class="post-label-group">
+                    <span class="post-label">小程序</span>
+                    <span class="post-label">答题系统</span>
+                    <span class="post-label">源码授权</span>
+                </div>
+                <div class="post-desc">
+                    想修改小学科学答题闯关小程序给客户使用，平台模板是否允许商用，有无版权限制需要注意？
+                </div>
+                <div class="post-foot">
+                    <div class="post-stat">
+                        <span>作者：全栈开发</span>
+                        <span>回复 11</span>
+                        <span>点赞 48</span>
+                    </div>
+                    <button class="detail-btn">查看详情</button>
+                </div>
+            </div>
+
+            <!-- 帖子5 AI技能定制讨论 -->
+            <div class="post-card">
+                <div class="post-head">
+                    <div class="post-title">从零搭建行业专属AI个性化技能流程</div>
+                    <span class="post-cat">AI技能</span>
+                </div>
+                <div class="post-label-group">
+                    <span class="post-label">提示词工程</span>
+                    <span class="post-label">行业工具</span>
+                    <span class="post-label">技能开发</span>
+                </div>
+                <div class="post-desc">
+                    想做中医药、心理测评类AI工具，完整开发步骤是什么，平台现有模板可以复用改造吗？
+                </div>
+                <div class="post-foot">
+                    <div class="post-stat">
+                        <span>作者：AI技能研发</span>
+                        <span>回复 38</span>
+                        <span>点赞 179</span>
+                    </div>
+                    <button class="detail-btn">查看详情</button>
+                </div>
+            </div>
+
+            <!-- 帖子6 GitHub静态网站分享 -->
+            <div class="post-card">
+                <div class="post-head">
+                    <div class="post-title">纯HTML网页部署GitHub Pages优化技巧</div>
+                    <span class="post-cat">网站开发</span>
+                </div>
+                <div class="post-label-group">
+                    <span class="post-label">静态页面</span>
+                    <span class="post-label">GitHub托管</span>
+                    <span class="post-label">页面性能</span>
+                </div>
+                <div class="post-desc">
+                    分享侧边栏+卡片类静态网页部署方案，解决路径、加载慢问题，可直接复制模板用于任务/技能/社区页面开发。
+                </div>
+                <div class="post-foot">
+                    <div class="post-stat">
+                        <span>作者：前端设计</span>
+                        <span>回复 24</span>
+                        <span>点赞 118</span>
+                    </div>
+                    <button class="detail-btn">查看详情</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

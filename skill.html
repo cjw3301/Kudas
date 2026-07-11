@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kudas - 技能中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", system-ui, sans-serif;
+        }
+        body {
+            background-color: #f6f7f9;
+            display: flex;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 左侧侧边栏 固定120px 浅色系 与首页完全一致 */
+        .sidebar {
+            width: 200px;
+            background-color: #eef0f3;
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px 0;
+        }
+        /* Logo样式严格按要求 */
+        .logo-wrap {
+            width: 100%;
+            padding: 0 10px;
+            margin-bottom: 32px;
+        }
+        .logo-img {
+            height: auto;
+            width: 180px;
+            display: block;
+            margin: 0 auto;
+        }
+        /* 导航菜单 */
+        .nav-list {
+            list-style: none;
+            padding: 0 8px;
+        }
+        .nav-item {
+            margin-bottom: 8;
+        }
+        .nav-link {
+            display: block;
+            padding: 14px 10px;
+            border-radius: 6px;
+            color: #444952;
+            text-decoration: none;
+            font-size: 15px;
+            text-align: center;
+            transition: 0.2s all;
+        }
+        .nav-link:hover {
+            background: #dde0e5;
+            color: #222;
+        }
+        .nav-link.active {
+            background: #367aff;
+            color: #ffffff;
+        }
+        /* 底部登录按钮 */
+        .sidebar-bottom {
+            padding: 0 10px 20px;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #367aff;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-btn:hover {
+            background: #2464e0;
+        }
+
+        /* 右侧主内容 */
+        .main {
+            margin-left: 200px;
+            flex: 1;
+            padding: 30px;
+        }
+        .page-title {
+            font-size: 26px;
+            margin-bottom: 24px;
+            color: #141924;
+            font-weight: 600;
+        }
+        /* 筛选栏 */
+        .filter-bar {
+            background: #fff;
+            padding: 16px 22px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+        .filter-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #222;
+        }
+        .filter-tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            padding: 6px 18px;
+            border: 1px solid #e2e6ed;
+            border-radius: 30px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+        .tag.active {
+            background: #367aff;
+            color: #fff;
+            border-color: #367aff;
+        }
+        .tag:hover:not(.active) {
+            border-color: #367aff;
+            color: #367aff;
+        }
+        /* 技能卡片网格 自动平铺 单卡最大480px */
+        .skill-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 480px));
+            gap: 16px;
+        }
+        .skill-card {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            padding: 22px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .skill-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+        /* 卡片头部 */
+        .skill-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .skill-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111;
+            flex: 1;
+        }
+        .skill-type {
+            padding: 3px 8px;
+            background: #e8f1ff;
+            color: #367aff;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        /* 技能标签 */
+        .skill-label-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .skill-label {
+            padding: 3px 10px;
+            background: #f3f6fb;
+            color: #555;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        /* 技能介绍 */
+        .skill-desc {
+            font-size: 14px;
+            color: #606673;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        /* 底部操作 */
+        .skill-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #999;
+        }
+        .skill-stat {
+            display: flex;
+            gap: 22px;
+        }
+        .use-btn {
+            padding: 7px 20px;
+            background: #367aff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .use-btn:hover {
+            background: #2464e0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧侧边栏 完全复用原有结构 -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="logo-wrap">
+                <a href="index.html">
+                    <img src="logo.png" class="logo-img" alt="Kudas Logo">
+                </a>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">任务</a>
+                </li>
+                <li class="nav-item">
+                    <a href="skill.html" class="nav-link active">技能</a>
+                </li>
+                <li class="nav-item">
+                    <a href="tool.html" class="nav-link">工具</a>
+                </li>
+                <li class="nav-item">
+                    <a href="community.html" class="nav-link">社区</a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-bottom">
+            <button class="login-btn">登录</button>
+        </div>
+    </aside>
+
+    <!-- 右侧技能列表 参考miaoda技能插件页面 -->
+    <main class="main">
+        <h1 class="page-title">AI技能中心</h1>
+        <div class="filter-bar">
+            <div class="filter-title">技能分类筛选</div>
+            <div class="filter-tags">
+                <div class="tag active">全部技能</div>
+                <div class="tag">视频AI技能</div>
+                <div class="tag">代码开发技能</div>
+                <div class="tag">图文生成技能</div>
+                <div class="tag">龙虾Agent技能</div>
+                <div class="tag">行业定制技能</div>
+            </div>
+        </div>
+
+        <div class="skill-container">
+            <!-- 1 龙虾交互技能 -->
+            <div class="skill-card">
+                <div class="skill-head">
+                    <div class="skill-name">龙虾像素空间交互Agent技能</div>
+                    <span class="skill-type">部署类</span>
+                </div>
+                <div class="skill-label-group">
+                    <span class="skill-label">电子宠物</span>
+                    <span class="skill-label">本地链接</span>
+                    <span class="skill-label">情绪交互</span>
+                </div>
+                <div class="skill-desc">
+                    参考miaoda龙虾像素空间插件开发，实现Agent状态实时展示、文字语音聊天、好友串门互动，一键配置本地运行环境，适配PC工作台使用。
+                </div>
+                <div class="skill-foot">
+                    <div class="skill-stat">
+                        <span>使用次数：1268</span>
+                        <span>更新：2026-07-10</span>
+                    </div>
+                    <button class="use-btn">立即启用</button>
+                </div>
+            </div>
+
+            <!-- 2 古诗智绘图文技能 -->
+            <div class="skill-card">
+                <div class="skill-head">
+                    <div class="skill-name">古诗智绘手绘生成技能</div>
+                    <span class="skill-type">图文类</span>
+                </div>
+                <div class="skill-label-group">
+                    <span class="skill-label">诗词解析</span>
+                    <span class="skill-label">手绘信息图</span>
+                    <span class="skill-label">导出图片</span>
+                </div>
+                <div class="skill-desc">
+                    检索古诗词自动解析背景、注释，一键生成国风手绘信息卡片，支持高清下载，适配教学、手账、文创内容制作。
+                </div>
+                <div class="skill-foot">
+                    <div class="skill-stat">
+                        <span>使用次数：956</span>
+                        <span>更新：2026-07-08</span>
+                    </div>
+                    <button class="use-btn">立即启用</button>
+                </div>
+            </div>
+
+            <!-- 3 AI短视频剪辑技能 -->
+            <div class="skill-card">
+                <div class="skill-head">
+                    <div class="skill-name">AI批量短视频剪辑技能</div>
+                    <span class="skill-type">视频类</span>
+                </div>
+                <div class="skill-label-group">
+                    <span class="skill-label">自动配音</span>
+                    <span class="skill-label">字幕生成</span>
+                    <span class="skill-label">多平台适配</span>
+                </div>
+                <div class="skill-desc">
+                    自动化短视频批量处理，智能分镜、画面切换、特效合成，一键输出抖音/小红书/视频号规格成片，营销内容批量产出专用。
+                </div>
+                <div class="skill-foot">
+                    <div class="skill-stat">
+                        <span>使用次数：1832</span>
+                        <span>更新：2026-07-11</span>
+                    </div>
+                    <button class="use-btn">立即启用</button>
+                </div>
+            </div>
+
+            <!-- 4 小程序开发辅助技能 -->
+            <div class="skill-card">
+                <div class="skill-head">
+                    <div class="skill-name">小程序快速开发辅助技能</div>
+                    <span class="skill-type">代码类</span>
+                </div>
+                <div class="skill-label-group">
+                    <span class="skill-label">模板生成</span>
+                    <span class="skill-label">代码补全</span>
+                    <span class="skill-label">BUG修复</span>
+                </div>
+                <div class="skill-desc">
+                    内置答题、商城、工具类小程序全套模板，自动生成页面代码、接口逻辑，快速调试修复前端常见问题，降低开发门槛。
+                </div>
+                <div class="skill-foot">
+                    <div class="skill-stat">
+                        <span>使用次数：741</span>
+                        <span>更新：2026-07-09</span>
+                    </div>
+                    <button class="use-btn">立即启用</button>
+                </div>
+            </div>
+
+            <!-- 5 心理测试定制技能 -->
+            <div class="skill-card">
+                <div class="skill-head">
+                    <div class="skill-name">完美主义心理自助测试技能</div>
+                    <span class="skill-type">行业定制</span>
+                </div>
+                <div class="skill-label-group">
+                    <span class="skill-label">心理测评</span>
+                    <span class="skill-label">情绪记录</span>
+                    <span class="skill-label">疗愈任务</span>
+                </div>
+                <div class="skill-desc">
+                    轻量心理自助工具，自动生成完美主义类型测评报告，配套情绪记录、书写疗愈练习，仅作心理辅助，不替代专业诊疗。
+                </div>
+                <div class="skill-foot">
+                    <div class="skill-stat">
+                        <span>使用次数：623</span>
+                        <span>更新：2026-07-05</span>
+                    </div>
+                    <button class="use-btn">立即启用</button>
+                </div>
+            </div>
+
+            <!-- 6 网页静态生成技能 -->
+            <div class="skill-card">
+                <div class="skill-head">
+                    <div class="skill-name">静态网站一键生成技能</div>
+                    <span class="skill-type">代码类</span>
+                </div>
+                <div class="skill-label-group">
+                    <span class="skill-label">HTML/CSS</span>
+                    <span class="skill-label">GitHub适配</span>
+                    <span class="skill-label">响应式</span>
+                </div>
+                <div class="skill-desc">
+                    输入需求自动生成可直接部署GitHub Pages的静态网页，侧边栏、卡片、筛选组件快速生成，适配任务、技能、作品展示类站点。
+                </div>
+                <div class="skill-foot">
+                    <div class="skill-stat">
+                        <span>使用次数：895</span>
+                        <span>更新：2026-07-06</span>
+                    </div>
+                    <button class="use-btn">立即启用</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
