@@ -3,381 +3,818 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kudas - AI创意与开发工作台</title>
+    <title>Kudas - AI创意开发任务平台</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, "Microsoft YaHei", sans-serif;
+            font-family: "Microsoft YaHei", system-ui, sans-serif;
         }
         body {
-            background-color: #f5f7fa;
+            background-color: #f6f7f9;
             display: flex;
             min-height: 100vh;
+            color: #333;
         }
 
-        /* 左侧固定侧边栏 */
+        /* 左侧侧边栏 宽度120px，浅色调，比页面背景略深，miaoda简约浅侧边风格 */
         .sidebar {
-            width: 240px;
-            background: #cddef7;
-            color: #fff;
+            width: 200px;
+            background-color: #eef0f3;
             position: fixed;
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 20px 0;
+            padding: 24px 0;
         }
-
-        /* 顶部Logo区域 高度固定60px */
-        .logo-box {
+        /* Logo容器 */
+        .logo-wrap {
             width: 100%;
-            height: 60px;
-            padding: 0 20px;
-            margin-bottom: 30px;
+            padding: 0 10px;
+            margin-bottom: 32px;
         }
-        /* 图片logo样式 */
+        /* 按要求修改logo样式：宽110px，高度自适应 */
         .logo-img {
-            height: 60px;
-            width: auto;
+            height: auto;
+            width: 180px;
             display: block;
+            margin: 0 auto;
         }
-
-        /* 导航菜单 */
+        /* 导航菜单列表 */
         .nav-list {
             list-style: none;
-            padding: 0 12px;
+            padding: 0 8px;
         }
         .nav-item {
             margin-bottom: 8px;
         }
         .nav-link {
             display: block;
-            padding: 14px 16px;
-            border-radius: 8px;
-            color: #000307;
+            padding: 14px 10px;
+            border-radius: 6px;
+            color: #444952;
             text-decoration: none;
             font-size: 15px;
-            transition: all 0.2s ease;
+            text-align: center;
+            transition: 0.2s all;
         }
         .nav-link:hover {
-            background: #242b38;
-            color: #ffffff;
+            background: #dde0e5;
+            color: #222;
         }
         .nav-link.active {
-            background: #2563eb;
-            color: #fff;
+            background: #367aff;
+            color: #ffffff;
         }
-
-        /* 底部登录按钮 */
+        /* 底部登录按钮区域 */
         .sidebar-bottom {
-            padding: 0 12px 20px;
+            padding: 0 10px 20px;
         }
         .login-btn {
             width: 100%;
-            padding: 14px;
-            border-radius: 8px;
+            padding: 12px;
             border: none;
-            background: #2563eb;
-            color: white;
-            font-size: 15px;
-            font-weight: 500;
+            border-radius: 6px;
+            background: #367aff;
+            color: #fff;
+            font-size: 14px;
             cursor: pointer;
             transition: background 0.2s;
         }
         .login-btn:hover {
-            background: #1d4ed8;
+            background: #2464e0;
         }
 
         /* 右侧主内容区域 */
-        .main-content {
-            margin-left: 240px;
+        .main {
+            margin-left: 200px;
             flex: 1;
-            padding: 32px;
+            padding: 30px;
         }
         .page-title {
             font-size: 26px;
-            color: #161a23;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
+            color: #141924;
             font-weight: 600;
         }
-
-        /* 项目卡片网格布局（复刻miaoda卡片样式） */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
+        /* 筛选栏样式 */
+        .filter-bar {
+            background: #fff;
+            padding: 16px 22px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
         }
-        .project-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s;
+        .filter-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #222;
         }
-        .project-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.09);
-        }
-        .card-img {
-            width: 100%;
-            height: 160px;
-            background: #eef2f9;
+        .filter-tags {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            padding: 6px 18px;
+            border: 1px solid #e2e6ed;
+            border-radius: 30px;
             font-size: 14px;
+            color: #666;
+            cursor: pointer;
         }
-        .card-body {
-            padding: 18px;
+        .tag.active {
+            background: #367aff;
+            color: #fff;
+            border-color: #367aff;
         }
-        .card-title {
-            font-size: 17px;
-            color: #1e293b;
+        .tag:hover:not(.active) {
+            border-color: #367aff;
+            color: #367aff;
+        }
+        /* 任务容器：网格布局，卡片最大480px，自动平铺自适应 */
+        .task-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 480px));
+            gap: 16px;
+        }
+        /* 任务卡片 限定480px最优宽度 */
+        .task-card {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            padding: 22px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+        /* 任务头部标题+价格 */
+        .task-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .task-name {
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 8px;
+            color: #111;
+            flex: 1;
         }
-        .card-desc {
+        .task-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #f75a33;
+        }
+        /* 任务标签组 */
+        .task-label-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .task-label {
+            padding: 3px 10px;
+            background: #e8f1ff;
+            color: #367aff;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        /* 任务描述文本 */
+        .task-desc {
             font-size: 14px;
-            color: #64748b;
-            line-height: 1.6;
+            color: #606673;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        /* 卡片底部信息栏 */
+        .task-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #999;
+        }
+        .task-info-left {
+            display: flex;
+            gap: 22px;
+        }
+        .apply-btn {
+            padding: 7px 20px;
+            background: #367aff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .apply-btn:hover {
+            background: #2464e0;
         }
     </style>
 </head>
 <body>
-    <!-- 左侧侧边栏 -->
+    <!-- 左侧固定侧边栏 -->
     <aside class="sidebar">
         <div class="sidebar-top">
-            <!-- 顶部Logo 固定高60px -->
-            <div class="logo-box">
-               
-                    <!-- 图片logo + 链接 -->
-                     <a href="index.html">
-                        <img src="logo.png" class="logo-img">
-                    </a>
-                
+            <!-- Logo区域，按要求图片标签与样式 -->
+            <div class="logo-wrap">
+                <a href="index.html">
+                    <img src="logo.png" class="logo-img" alt="Kudas Logo">
+                </a>
             </div>
-            <!-- 主菜单 -->
+            <!-- 一级导航菜单：任务、技能、工具、社区，无二级菜单 -->
             <ul class="nav-list">
                 <li class="nav-item">
-                    <a href="#" class="nav-link active">视频制作</a>
+                    <a href="#" class="nav-link active">任务</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">软件开发</a>
+                    <a href="#" class="nav-link">技能</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">龙虾部署</a>
+                    <a href="#" class="nav-link">工具</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">技能开发</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">创作社区</a>
+                    <a href="#" class="nav-link">社区</a>
                 </li>
             </ul>
         </div>
-        <!-- 底部登录按钮 -->
+        <!-- 底部固定登录按钮 -->
         <div class="sidebar-bottom">
-            <button class="login-btn">登录账号</button>
+            <button class="login-btn">登录</button>
         </div>
     </aside>
 
-    <!-- 右侧主内容卡片区 -->
-    <main class="main-content">
-        <h1 class="page-title">全部项目工作台</h1>
-        <div class="card-grid">
-            <!-- 示例卡片1 -->
-            <div class="project-card">
-                <div class="card-img">视频AI自动剪辑工具预览图</div>
-                <div class="card-body">
-                    <h3 class="card-title">短视频批量剪辑系统</h3>
-                    <p class="card-desc">AI自动分镜、字幕生成、配音合成，一键批量产出营销短视频，适配抖音/小红书平台。</p>
+    <!-- 右侧任务列表区域，参考zbj任务列表样式，网格自动平铺 -->
+    <main class="main">
+        <h1 class="page-title">全部开发任务大厅</h1>
+        <!-- 完整指定筛选分类 -->
+        <div class="filter-bar">
+            <div class="filter-title">分类筛选</div>
+            <div class="filter-tags">
+                <div class="tag active">全部任务</div>
+                <div class="tag">视频制作</div>
+                <div class="tag">程序开发</div>
+                <div class="tag">网站开发</div>
+                <div class="tag">小程序开发</div>
+                <div class="tag">龙虾Agent部署</div>
+                <div class="tag">AI个性化技能开发</div>
+            </div>
+        </div>
+
+        <div class="task-container">
+            <!-- 视频制作任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">AI短视频批量剪辑、动画生成项目</div>
+                    <div class="task-price">¥5000</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">AI剪辑</span>
+                    <span class="task-label">短视频</span>
+                    <span class="task-label">批量产出</span>
+                </div>
+                <div class="task-desc">
+                    参考miaoda平台AI绘画、视频生成工具开发自动化剪辑系统，自动配音、字幕、画面切换，适配抖音、小红书、视频号，支持企业营销号批量素材处理，交付可复制网页模板。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-11</span>
+                        <span>已有32人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片2 -->
-            <div class="project-card">
-                <div class="card-img">龙虾Agent后台界面预览</div>
-                <div class="card-body">
-                    <h3 class="card-title">龙虾像素空间部署面板</h3>
-                    <p class="card-desc">本地Agent一键链接，电子宠物实时状态展示，支持好友互访、AI对话交互。</p>
+
+            <!-- 程序开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">后端程序、功能模块定制开发调试</div>
+                    <div class="task-price">¥2000-4800</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">程序开发</span>
+                    <span class="task-label">功能定制</span>
+                    <span class="task-label">源码交付</span>
+                </div>
+                <div class="task-desc">
+                    承接各类前后端程序开发、功能迭代、BUG调试、接口对接开发，适配AI工具、管理系统、互动应用等miaoda同类项目，代码规范，支持二次开发。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-10</span>
+                        <span>已有18人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片3 -->
-            <div class="project-card">
-                <div class="card-img">企业管理系统演示页</div>
-                <div class="card-body">
-                    <h3 class="card-title">企业全栈定制开发</h3>
-                    <p class="card-desc">官网、小程序、管控大屏、答题系统一站式开发，提供可复制源码模板。</p>
+
+            <!-- 网站开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">企业官网、展示型网站定制开发</div>
+                    <div class="task-price">¥800-3500</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">网站开发</span>
+                    <span class="task-label">响应式布局</span>
+                    <span class="task-label">静态站点</span>
+                </div>
+                <div class="task-desc">
+                    开发企业官网、个人作品集、项目展示网站，风格对标miaoda简约工作台，适配PC+移动端，加载速度快，可直接部署GitHub Pages、服务器托管。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-09</span>
+                        <span>已有25人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片4 -->
-            <div class="project-card">
-                <div class="card-img">AI技能训练工作台</div>
-                <div class="card-body">
-                    <h3 class="card-title">自定义AI技能开发</h3>
-                    <p class="card-desc">搭建专属AI助手、行业工具、测试小程序，可视化提示词配置，无需复杂代码。</p>
+
+            <!-- 小程序开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">功能型小程序定制开发制作</div>
+                    <div class="task-price">¥1200-5000</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">小程序开发</span>
+                    <span class="task-label">工具类应用</span>
+                    <span class="task-label">全功能交付</span>
+                </div>
+                <div class="task-desc">
+                    开发答题闯关、心理测试、商城、工具类微信小程序，参考miaoda各类轻应用模板，包含前端界面、基础功能、数据展示，提供完整源码与部署教程。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-08</span>
+                        <span>已有22人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片5 -->
-            <div class="project-card">
-                <div class="card-img">创作者社区首页预览</div>
-                <div class="card-body">
-                    <h3 class="card-title">创作者交流社区</h3>
-                    <p class="card-desc">项目分享、模板开源、流量扶持计划，创作者发布作品互相交流复用。</p>
+
+            <!-- 龙虾Agent部署任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">龙虾像素空间Agent本地环境部署调试</div>
+                    <div class="task-price">¥180-750</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">龙虾Agent部署</span>
+                    <span class="task-label">本地部署</span>
+                    <span class="task-label">环境调试</span>
+                </div>
+                <div class="task-desc">
+                    基于miaoda龙虾像素空间项目，搭建运行环境，实现办公室Agent状态展示、AI聊天、好友串门功能，修复端口链接、情绪系统异常等问题，交付一键部署脚本。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-07</span>
+                        <span>已有46人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片6 -->
-            <div class="project-card">
-                <div class="card-img">国风诗词互动小游戏</div>
-                <div class="card-body">
-                    <h3 class="card-title">国风互动H5游戏</h3>
-                    <p class="card-desc">诗词闯关、历史模拟、人生模拟器，轻量化网页互动游戏快速搭建。</p>
+
+            <!-- AI个性化技能开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">AI个性化技能定制开发与优化</div>
+                    <div class="task-price">¥380-1400</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">AI个性化技能开发</span>
+                    <span class="task-label">提示词优化</span>
+                    <span class="task-label">定制工具</span>
+                </div>
+                <div class="task-desc">
+                    复刻miaoda内古诗智绘、法律助手、托育智能助手、心理测试等AI工具，自定义AI问答、生成、解析技能，适配各类小众行业场景使用。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-06</span>
+                        <span>已有35人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片1 -->
-            <div class="project-card">
-                <div class="card-img">视频AI自动剪辑工具预览图</div>
-                <div class="card-body">
-                    <h3 class="card-title">短视频批量剪辑系统</h3>
-                    <p class="card-desc">AI自动分镜、字幕生成、配音合成，一键批量产出营销短视频，适配抖音/小红书平台。</p>
+                        <!-- 视频制作任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">AI短视频批量剪辑、动画生成项目</div>
+                    <div class="task-price">¥260-1000</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">AI剪辑</span>
+                    <span class="task-label">短视频</span>
+                    <span class="task-label">批量产出</span>
+                </div>
+                <div class="task-desc">
+                    参考miaoda平台AI绘画、视频生成工具开发自动化剪辑系统，自动配音、字幕、画面切换，适配抖音、小红书、视频号，支持企业营销号批量素材处理，交付可复制网页模板。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-11</span>
+                        <span>已有32人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片2 -->
-            <div class="project-card">
-                <div class="card-img">龙虾Agent后台界面预览</div>
-                <div class="card-body">
-                    <h3 class="card-title">龙虾像素空间部署面板</h3>
-                    <p class="card-desc">本地Agent一键链接，电子宠物实时状态展示，支持好友互访、AI对话交互。</p>
+
+            <!-- 程序开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">后端程序、功能模块定制开发调试</div>
+                    <div class="task-price">¥900-4800</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">程序开发</span>
+                    <span class="task-label">功能定制</span>
+                    <span class="task-label">源码交付</span>
+                </div>
+                <div class="task-desc">
+                    承接各类前后端程序开发、功能迭代、BUG调试、接口对接开发，适配AI工具、管理系统、互动应用等miaoda同类项目，代码规范，支持二次开发。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-10</span>
+                        <span>已有18人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片3 -->
-            <div class="project-card">
-                <div class="card-img">企业管理系统演示页</div>
-                <div class="card-body">
-                    <h3 class="card-title">企业全栈定制开发</h3>
-                    <p class="card-desc">官网、小程序、管控大屏、答题系统一站式开发，提供可复制源码模板。</p>
+
+            <!-- 网站开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">企业官网、展示型网站定制开发</div>
+                    <div class="task-price">¥800-3500</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">网站开发</span>
+                    <span class="task-label">响应式布局</span>
+                    <span class="task-label">静态站点</span>
+                </div>
+                <div class="task-desc">
+                    开发企业官网、个人作品集、项目展示网站，风格对标miaoda简约工作台，适配PC+移动端，加载速度快，可直接部署GitHub Pages、服务器托管。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-09</span>
+                        <span>已有25人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片4 -->
-            <div class="project-card">
-                <div class="card-img">AI技能训练工作台</div>
-                <div class="card-body">
-                    <h3 class="card-title">自定义AI技能开发</h3>
-                    <p class="card-desc">搭建专属AI助手、行业工具、测试小程序，可视化提示词配置，无需复杂代码。</p>
+
+            <!-- 小程序开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">功能型小程序定制开发制作</div>
+                    <div class="task-price">¥1200-5000</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">小程序开发</span>
+                    <span class="task-label">工具类应用</span>
+                    <span class="task-label">全功能交付</span>
+                </div>
+                <div class="task-desc">
+                    开发答题闯关、心理测试、商城、工具类微信小程序，参考miaoda各类轻应用模板，包含前端界面、基础功能、数据展示，提供完整源码与部署教程。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-08</span>
+                        <span>已有22人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片5 -->
-            <div class="project-card">
-                <div class="card-img">创作者社区首页预览</div>
-                <div class="card-body">
-                    <h3 class="card-title">创作者交流社区</h3>
-                    <p class="card-desc">项目分享、模板开源、流量扶持计划，创作者发布作品互相交流复用。</p>
+
+            <!-- 龙虾Agent部署任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">龙虾像素空间Agent本地环境部署调试</div>
+                    <div class="task-price">¥180-750</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">龙虾Agent部署</span>
+                    <span class="task-label">本地部署</span>
+                    <span class="task-label">环境调试</span>
+                </div>
+                <div class="task-desc">
+                    基于miaoda龙虾像素空间项目，搭建运行环境，实现办公室Agent状态展示、AI聊天、好友串门功能，修复端口链接、情绪系统异常等问题，交付一键部署脚本。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-07</span>
+                        <span>已有46人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片6 -->
-            <div class="project-card">
-                <div class="card-img">国风诗词互动小游戏</div>
-                <div class="card-body">
-                    <h3 class="card-title">国风互动H5游戏</h3>
-                    <p class="card-desc">诗词闯关、历史模拟、人生模拟器，轻量化网页互动游戏快速搭建。</p>
+
+            <!-- AI个性化技能开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">AI个性化技能定制开发与优化</div>
+                    <div class="task-price">¥380-1400</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">AI个性化技能开发</span>
+                    <span class="task-label">提示词优化</span>
+                    <span class="task-label">定制工具</span>
+                </div>
+                <div class="task-desc">
+                    复刻miaoda内古诗智绘、法律助手、托育智能助手、心理测试等AI工具，自定义AI问答、生成、解析技能，适配各类小众行业场景使用。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-06</span>
+                        <span>已有35人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片1 -->
-            <div class="project-card">
-                <div class="card-img">视频AI自动剪辑工具预览图</div>
-                <div class="card-body">
-                    <h3 class="card-title">短视频批量剪辑系统</h3>
-                    <p class="card-desc">AI自动分镜、字幕生成、配音合成，一键批量产出营销短视频，适配抖音/小红书平台。</p>
+                        <!-- 视频制作任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">AI短视频批量剪辑、动画生成项目</div>
+                    <div class="task-price">¥260-1000</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">AI剪辑</span>
+                    <span class="task-label">短视频</span>
+                    <span class="task-label">批量产出</span>
+                </div>
+                <div class="task-desc">
+                    参考miaoda平台AI绘画、视频生成工具开发自动化剪辑系统，自动配音、字幕、画面切换，适配抖音、小红书、视频号，支持企业营销号批量素材处理，交付可复制网页模板。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-11</span>
+                        <span>已有32人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片2 -->
-            <div class="project-card">
-                <div class="card-img">龙虾Agent后台界面预览</div>
-                <div class="card-body">
-                    <h3 class="card-title">龙虾像素空间部署面板</h3>
-                    <p class="card-desc">本地Agent一键链接，电子宠物实时状态展示，支持好友互访、AI对话交互。</p>
+
+            <!-- 程序开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">后端程序、功能模块定制开发调试</div>
+                    <div class="task-price">¥900-4800</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">程序开发</span>
+                    <span class="task-label">功能定制</span>
+                    <span class="task-label">源码交付</span>
+                </div>
+                <div class="task-desc">
+                    承接各类前后端程序开发、功能迭代、BUG调试、接口对接开发，适配AI工具、管理系统、互动应用等miaoda同类项目，代码规范，支持二次开发。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-10</span>
+                        <span>已有18人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片3 -->
-            <div class="project-card">
-                <div class="card-img">企业管理系统演示页</div>
-                <div class="card-body">
-                    <h3 class="card-title">企业全栈定制开发</h3>
-                    <p class="card-desc">官网、小程序、管控大屏、答题系统一站式开发，提供可复制源码模板。</p>
+
+            <!-- 网站开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">企业官网、展示型网站定制开发</div>
+                    <div class="task-price">¥800-3500</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">网站开发</span>
+                    <span class="task-label">响应式布局</span>
+                    <span class="task-label">静态站点</span>
+                </div>
+                <div class="task-desc">
+                    开发企业官网、个人作品集、项目展示网站，风格对标miaoda简约工作台，适配PC+移动端，加载速度快，可直接部署GitHub Pages、服务器托管。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-09</span>
+                        <span>已有25人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片4 -->
-            <div class="project-card">
-                <div class="card-img">AI技能训练工作台</div>
-                <div class="card-body">
-                    <h3 class="card-title">自定义AI技能开发</h3>
-                    <p class="card-desc">搭建专属AI助手、行业工具、测试小程序，可视化提示词配置，无需复杂代码。</p>
+
+            <!-- 小程序开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">功能型小程序定制开发制作</div>
+                    <div class="task-price">¥1200-5000</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">小程序开发</span>
+                    <span class="task-label">工具类应用</span>
+                    <span class="task-label">全功能交付</span>
+                </div>
+                <div class="task-desc">
+                    开发答题闯关、心理测试、商城、工具类微信小程序，参考miaoda各类轻应用模板，包含前端界面、基础功能、数据展示，提供完整源码与部署教程。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-08</span>
+                        <span>已有22人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片5 -->
-            <div class="project-card">
-                <div class="card-img">创作者社区首页预览</div>
-                <div class="card-body">
-                    <h3 class="card-title">创作者交流社区</h3>
-                    <p class="card-desc">项目分享、模板开源、流量扶持计划，创作者发布作品互相交流复用。</p>
+
+            <!-- 龙虾Agent部署任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">龙虾像素空间Agent本地环境部署调试</div>
+                    <div class="task-price">¥180-750</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">龙虾Agent部署</span>
+                    <span class="task-label">本地部署</span>
+                    <span class="task-label">环境调试</span>
+                </div>
+                <div class="task-desc">
+                    基于miaoda龙虾像素空间项目，搭建运行环境，实现办公室Agent状态展示、AI聊天、好友串门功能，修复端口链接、情绪系统异常等问题，交付一键部署脚本。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-07</span>
+                        <span>已有46人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片6 -->
-            <div class="project-card">
-                <div class="card-img">国风诗词互动小游戏</div>
-                <div class="card-body">
-                    <h3 class="card-title">国风互动H5游戏</h3>
-                    <p class="card-desc">诗词闯关、历史模拟、人生模拟器，轻量化网页互动游戏快速搭建。</p>
+
+            <!-- AI个性化技能开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">AI个性化技能定制开发与优化</div>
+                    <div class="task-price">¥380-1400</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">AI个性化技能开发</span>
+                    <span class="task-label">提示词优化</span>
+                    <span class="task-label">定制工具</span>
+                </div>
+                <div class="task-desc">
+                    复刻miaoda内古诗智绘、法律助手、托育智能助手、心理测试等AI工具，自定义AI问答、生成、解析技能，适配各类小众行业场景使用。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-06</span>
+                        <span>已有35人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片1 -->
-            <div class="project-card">
-                <div class="card-img">视频AI自动剪辑工具预览图</div>
-                <div class="card-body">
-                    <h3 class="card-title">短视频批量剪辑系统</h3>
-                    <p class="card-desc">AI自动分镜、字幕生成、配音合成，一键批量产出营销短视频，适配抖音/小红书平台。</p>
+                        <!-- 视频制作任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">AI短视频批量剪辑、动画生成项目</div>
+                    <div class="task-price">¥260-1000</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">AI剪辑</span>
+                    <span class="task-label">短视频</span>
+                    <span class="task-label">批量产出</span>
+                </div>
+                <div class="task-desc">
+                    参考miaoda平台AI绘画、视频生成工具开发自动化剪辑系统，自动配音、字幕、画面切换，适配抖音、小红书、视频号，支持企业营销号批量素材处理，交付可复制网页模板。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-11</span>
+                        <span>已有32人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片2 -->
-            <div class="project-card">
-                <div class="card-img">龙虾Agent后台界面预览</div>
-                <div class="card-body">
-                    <h3 class="card-title">龙虾像素空间部署面板</h3>
-                    <p class="card-desc">本地Agent一键链接，电子宠物实时状态展示，支持好友互访、AI对话交互。</p>
+
+            <!-- 程序开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">后端程序、功能模块定制开发调试</div>
+                    <div class="task-price">¥900-4800</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">程序开发</span>
+                    <span class="task-label">功能定制</span>
+                    <span class="task-label">源码交付</span>
+                </div>
+                <div class="task-desc">
+                    承接各类前后端程序开发、功能迭代、BUG调试、接口对接开发，适配AI工具、管理系统、互动应用等miaoda同类项目，代码规范，支持二次开发。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-10</span>
+                        <span>已有18人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片3 -->
-            <div class="project-card">
-                <div class="card-img">企业管理系统演示页</div>
-                <div class="card-body">
-                    <h3 class="card-title">企业全栈定制开发</h3>
-                    <p class="card-desc">官网、小程序、管控大屏、答题系统一站式开发，提供可复制源码模板。</p>
+
+            <!-- 网站开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">企业官网、展示型网站定制开发</div>
+                    <div class="task-price">¥800-3500</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">网站开发</span>
+                    <span class="task-label">响应式布局</span>
+                    <span class="task-label">静态站点</span>
+                </div>
+                <div class="task-desc">
+                    开发企业官网、个人作品集、项目展示网站，风格对标miaoda简约工作台，适配PC+移动端，加载速度快，可直接部署GitHub Pages、服务器托管。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-09</span>
+                        <span>已有25人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片4 -->
-            <div class="project-card">
-                <div class="card-img">AI技能训练工作台</div>
-                <div class="card-body">
-                    <h3 class="card-title">自定义AI技能开发</h3>
-                    <p class="card-desc">搭建专属AI助手、行业工具、测试小程序，可视化提示词配置，无需复杂代码。</p>
+
+            <!-- 小程序开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">功能型小程序定制开发制作</div>
+                    <div class="task-price">¥1200-5000</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">小程序开发</span>
+                    <span class="task-label">工具类应用</span>
+                    <span class="task-label">全功能交付</span>
+                </div>
+                <div class="task-desc">
+                    开发答题闯关、心理测试、商城、工具类微信小程序，参考miaoda各类轻应用模板，包含前端界面、基础功能、数据展示，提供完整源码与部署教程。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-08</span>
+                        <span>已有22人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片5 -->
-            <div class="project-card">
-                <div class="card-img">创作者社区首页预览</div>
-                <div class="card-body">
-                    <h3 class="card-title">创作者交流社区</h3>
-                    <p class="card-desc">项目分享、模板开源、流量扶持计划，创作者发布作品互相交流复用。</p>
+
+            <!-- 龙虾Agent部署任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">龙虾像素空间Agent本地环境部署调试</div>
+                    <div class="task-price">¥180-750</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">龙虾Agent部署</span>
+                    <span class="task-label">本地部署</span>
+                    <span class="task-label">环境调试</span>
+                </div>
+                <div class="task-desc">
+                    基于miaoda龙虾像素空间项目，搭建运行环境，实现办公室Agent状态展示、AI聊天、好友串门功能，修复端口链接、情绪系统异常等问题，交付一键部署脚本。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-07</span>
+                        <span>已有46人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
-            <!-- 示例卡片6 -->
-            <div class="project-card">
-                <div class="card-img">国风诗词互动小游戏</div>
-                <div class="card-body">
-                    <h3 class="card-title">国风互动H5游戏</h3>
-                    <p class="card-desc">诗词闯关、历史模拟、人生模拟器，轻量化网页互动游戏快速搭建。</p>
+
+            <!-- AI个性化技能开发任务 -->
+            <div class="task-card">
+                <div class="task-head">
+                    <div class="task-name">AI个性化技能定制开发与优化</div>
+                    <div class="task-price">¥380-1400</div>
+                </div>
+                <div class="task-label-group">
+                    <span class="task-label">AI个性化技能开发</span>
+                    <span class="task-label">提示词优化</span>
+                    <span class="task-label">定制工具</span>
+                </div>
+                <div class="task-desc">
+                    复刻miaoda内古诗智绘、法律助手、托育智能助手、心理测试等AI工具，自定义AI问答、生成、解析技能，适配各类小众行业场景使用。
+                </div>
+                <div class="task-foot">
+                    <div class="task-info-left">
+                        <span>发布时间：2026-07-06</span>
+                        <span>已有35人接单</span>
+                    </div>
+                    <button class="apply-btn">立即接单</button>
                 </div>
             </div>
         </div>
