@@ -130,16 +130,16 @@
             border-color: #367aff;
             color: #367aff;
         }
-        /* 工具列表容器：自动平铺，单卡片最大宽度480px */
+        /* 工具列表容器：自动平铺 */
         .tool-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(420px, 480px));
+            grid-template-columns: repeat(auto-fill, minmax(420px, 100%));
             gap: 16px;
         }
         /* 工具卡片通用样式 */
         .tool-card {
             width: 100%;
-            max-width: 480px;
+            max-width: 100%;
             background: #fff;
             padding: 22px;
             border-radius: 8px;
